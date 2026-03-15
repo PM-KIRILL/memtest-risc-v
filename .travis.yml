@@ -1,0 +1,22 @@
+language: c
+os: linux
+dist: bionic
+
+jobs:
+  include:
+  - env: MAKE_ENV="ARCH=i386"
+    before_install:
+    - sudo apt-get -y install gcc-multilib
+  - env: MAKE_ENV="ARCH=riscv RUN_WITH=qemu-riscv64-static"
+    before_install:
+    - sudo ./.travis/configure-apt.sh # Костыль из-за отсутствия поддержки RISC-V в qemu@bionic
+    - sudo apt-get -y install gcc-riscv64-linux-gnu libc6-dev-riscv64-cross u-boot-tools
+    - sudo apt-get -y -t eoan install qemu-user-static
+
+script:
+- make $MAKE_ENV
+- MUTE_PATTERNS= make clean test $MAKE_ENV
+- MUTE_PATTERNS= make clean test $MAKE_ENV TEST_OPT_FLAGS=-DOPTIMIZED_FIRST_SNIPPET=0
+- MUTE_PATTERNS= make clean test $MAKE_ENV TEST_OPT_FLAGS=-DOPTIMIZED_SECOND_SNIPPET=0
+- MUTE_PATTERNS= make clean test $MAKE_ENV TEST_OPT_FLAGS=-DOPTIMIZED_THIRD_SNIPPET=0
+- MUTE_PATTERNS= make clean test $MAKE_ENV TEST_OPT_FLAGS=-DOPTIMIZED=0

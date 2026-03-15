@@ -1,0 +1,62 @@
+/* По историческим причинам... */
+ENTRY(startup_32); 
+
+SECTIONS {
+	. = 0;
+	.text : {
+		_start = .;
+		*(.text)
+		*(.text.*)
+		*(.plt)
+		_etext = . ;
+	} = 0x9090
+	.rodata : {
+		*(.rodata)
+		*(.rodata.*)
+	}
+	.dynsym     : { *(.dynsym) }
+	.dynstr     : { *(.dynstr) }
+	.hash       : { *(.hash) }
+	.gnu.hash   : { *(.gnu.hash) }
+
+	. = ALIGN(16);
+	_dynamic = .;
+	.dynamic    : { *(.dynamic) }
+
+	.rela.text    : { *(.rela.text   .rela.text.*) }
+	.rela.rodata  : { *(.rela.rodata .rela.rodata.*) }
+	.rela.data    : { *(.rela.data   .rela.data.*) }
+	.rela.got     : { *(.rela.got    .rela.got.*) }
+	.rela.plt     : { *(.rela.plt    .rela.plt.*) }
+
+	.rel.text    : { *(.rel.text   .rel.text.*) }
+	.rel.rodata  : { *(.rel.rodata .rel.rodata.*) }
+	.rel.data    : { *(.rel.data   .rel.data.*) }
+	.rel.got     : { *(.rel.got    .rel.got.*) }
+	.rel.plt     : { *(.rel.plt    .rel.plt.*) }
+
+	. = ALIGN(4);
+	.data : {
+		 _data = .; 
+		*(.data) 
+		*(.data.*) 
+	}
+	.got : {
+		*(.got.plt)
+		*(.got)
+		_edata = . ;
+	}
+	. = ALIGN(4);
+	.bss : { 
+		_bss = .;
+		*(.dynbss)
+		*(.bss) 
+		*(.bss.*) 
+		*(COMMON) 
+		/* _end должен быть выровнен как минимум по 256 байтам */
+		. = ALIGN(256); 
+		_end = .;
+	}
+/* Комментарий для пропуска отладочных разделов и т.д. */
+	/DISCARD/ : { *(*) }
+}

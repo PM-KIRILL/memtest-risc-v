@@ -1,0 +1,10 @@
+
+*.o
+*.s
+.gdb_history
+memtest_shared
+memtest_shared.bin
+test-runner
+memtest
+memtest.bin
+memtest.uboot
